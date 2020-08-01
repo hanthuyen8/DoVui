@@ -1,0 +1,24 @@
+[
+    {
+        "language": "en",
+        "fontName": "FredokaOne-Regular",
+        "data": {
+            "lobby_new_game": "Create New Game",
+            "lobby_title": "LOBBY",
+            "lobby_desc": "or join other players",
+            "misc_players": "players",
+            "misc_math": "math"
+        }
+    },
+    {
+        "language": "vi",
+        "fontName": "OpenSans-Bold",
+        "data": {
+            "lobby_new_game": "Tạo Phòng Mới",
+            "lobby_title": "PHÒNG ĐỢI",
+            "lobby_desc": "hoặc tham gia cùng người chơi khác",
+            "misc_players": "người chơi",
+            "misc_math": "toán"
+        }
+    }
+]
