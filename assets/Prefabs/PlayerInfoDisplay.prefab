@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Game Box",
+    "_name": "Slot 1",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -24,20 +24,20 @@
         "__id__": 5
       },
       {
-        "__id__": 8
-      },
-      {
-        "__id__": 11
+        "__id__": 9
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 14
+        "__id__": 12
+      },
+      {
+        "__id__": 13
       }
     ],
     "_prefab": {
-      "__id__": 15
+      "__id__": 14
     },
     "_opacity": 120,
     "_color": {
@@ -50,7 +50,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 678,
-      "height": 219
+      "height": 190
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -61,8 +61,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        377.256,
-        832.432,
+        0,
+        285,
         0,
         0,
         0,
@@ -188,14 +188,14 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "baaf4768-8456-455c-b927-95ef6227b0ea"
+      "__id__": 0
     },
-    "fileId": "8avY1QvQ5M5YnqlQUHdH49",
+    "fileId": "99VJsK81FMoZMCZkTWdDzL",
     "sync": false
   },
   {
     "__type__": "cc.Node",
-    "_name": "Label - Player Number",
+    "_name": "Label - Level",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -205,10 +205,13 @@
     "_components": [
       {
         "__id__": 6
+      },
+      {
+        "__id__": 7
       }
     ],
     "_prefab": {
-      "__id__": 7
+      "__id__": 8
     },
     "_opacity": 255,
     "_color": {
@@ -273,8 +276,8 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "1/2 Players",
-    "_N$string": "1/2 Players",
+    "_string": "level 1",
+    "_N$string": "level 1",
     "_fontSize": 33,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -294,114 +297,14 @@
     "_id": ""
   },
   {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__uuid__": "baaf4768-8456-455c-b927-95ef6227b0ea"
-    },
-    "fileId": "fcriMUJvlOGL1nN0NzSvFS",
-    "sync": false
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "Label - Game Types",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 1
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 9
-      }
-    ],
-    "_prefab": {
-      "__id__": 10
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 58,
-      "g": 56,
-      "b": 70,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 200,
-      "height": 40
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        199.831,
-        66.8,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Label",
+    "__type__": "db5c2nTEEJAKpIUD3Zeso9o",
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 8
+      "__id__": 5
     },
     "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_useOriginalSize": false,
-    "_string": "Math",
-    "_N$string": "Math",
-    "_fontSize": 33,
-    "_lineHeight": 40,
-    "_enableWrapText": false,
-    "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
-    },
-    "_isSystemFontUsed": false,
-    "_spacingX": 0,
-    "_batchAsBitmap": false,
-    "_styleFlags": 0,
-    "_underlineHeight": 0,
-    "_N$horizontalAlign": 2,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 2,
-    "_N$cacheMode": 0,
+    "languageDataId": "misc_players",
     "_id": ""
   },
   {
@@ -410,9 +313,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "baaf4768-8456-455c-b927-95ef6227b0ea"
+      "__id__": 0
     },
-    "fileId": "9d+mLFl8BLGaggnl5+3EZx",
+    "fileId": "74/MlipWlNYaXvOwq1bIuU",
     "sync": false
   },
   {
@@ -426,11 +329,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 12
+        "__id__": 10
       }
     ],
     "_prefab": {
-      "__id__": 13
+      "__id__": 11
     },
     "_opacity": 255,
     "_color": {
@@ -484,7 +387,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 11
+      "__id__": 9
     },
     "_enabled": true,
     "_materials": [
@@ -521,9 +424,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "baaf4768-8456-455c-b927-95ef6227b0ea"
+      "__id__": 0
     },
-    "fileId": "aa2DGunwBDtJ/YUrkY5hQ/",
+    "fileId": "22lOYO9w1PdK2jlaZFQl04",
     "sync": false
   },
   {
@@ -545,7 +448,7 @@
       "__uuid__": "98b8057c-8287-4d97-b50e-b49e5d08aa10"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -559,14 +462,33 @@
     "_id": ""
   },
   {
+    "__type__": "cd6acAr4nVHTrVZz7TBAn9g",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "sprAvatar": {
+      "__id__": 3
+    },
+    "lblNickName": {
+      "__id__": 10
+    },
+    "lblLevel": {
+      "__id__": 6
+    },
+    "_id": ""
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "baaf4768-8456-455c-b927-95ef6227b0ea"
+      "__id__": 0
     },
-    "fileId": "c3TDdeJwtBPqm7esgDJOLY",
+    "fileId": "fc5S3Vtn9DS5O9Cfq9YsKG",
     "sync": false
   }
 ]

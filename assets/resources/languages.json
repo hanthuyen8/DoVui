@@ -7,7 +7,8 @@
             "lobby_title": "LOBBY",
             "lobby_desc": "or join other players",
             "misc_players": "players",
-            "misc_math": "math"
+            "misc_math": "Math",
+            "lobby_max_players" : "Max Players:"
         }
     },
     {
@@ -18,7 +19,8 @@
             "lobby_title": "PHÒNG ĐỢI",
             "lobby_desc": "hoặc tham gia cùng người chơi khác",
             "misc_players": "người chơi",
-            "misc_math": "toán"
+            "misc_math": "Toán",
+            "lobby_max_players" : "Số người:"
         }
     }
 ]

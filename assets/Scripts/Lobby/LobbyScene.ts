@@ -5,14 +5,22 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Languages from "./GameSettings";
-import NetworkController from "./Network/NetworkController";
+import RoomInfoDisplay from "./RoomInfoDisplay";
+import Languages from "../Languages";
+import NetworkController from "../Network/NetworkController";
+import CreateRoomDialog from "./CreateRoomDialog";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class LobbyScene extends cc.Component
 {
+    @property(CreateRoomDialog)
+    private createRoomDialog: CreateRoomDialog = null;
+
+    @property(cc.Prefab)
+    private roomInfoPrefab: cc.Prefab = null;
+
     @property(cc.Label)
     private lblWelcome: cc.Label = null;
 
@@ -22,8 +30,8 @@ export default class LobbyScene extends cc.Component
     @property(cc.Label)
     private lblJoinGames: cc.Label = null;
 
-    @property(cc.Label)
-    private lblCreateNewGame: cc.Label = null;
+    @property(cc.Button)
+    private btnCreateNewGame: cc.Button = null;
 
     @property(cc.ScrollView)
     private listGames: cc.ScrollView = null;
@@ -33,12 +41,12 @@ export default class LobbyScene extends cc.Component
     onLoad()
     {
         Languages.Instance.setDefaultLanguage("vi");
-        const lang = Languages.Instance.getData();
+        const lang = Languages.Instance;
 
         this.lblWelcome.string = NetworkController.getInstance().NickName;
-        this.lblTitle.string = lang.lobby_title;
-        this.lblJoinGames.string = lang.lobby_desc;
-        this.lblCreateNewGame.string = lang.lobby_new_game;
+        // this.lblTitle.string = lang.lobby_title;
+        // this.lblJoinGames.string = lang.lobby_desc;
+        // this.btnCreateNewGame.getComponentInChildren(cc.Label).string = lang.lobby_new_game;
 
         const newFont = Languages.Instance.getFont();
         if (newFont)
@@ -50,10 +58,25 @@ export default class LobbyScene extends cc.Component
                     lbl.font = newFont;
             }
         }
+
+        this.getRooms();
     }
 
-    private createRoom(maxPlayer : number = 2)
+    private getRooms()
     {
-        
+        const roomInfo = NetworkController.getInstance().getRooms();
+        let roomInfoDisplay = this.roomInfoPrefab.data.getComponent(RoomInfoDisplay);
+        if (!roomInfoDisplay)
+            return;
+
+        for (const info of roomInfo)
+        {
+            let node = cc.instantiate(this.roomInfoPrefab);
+            node.getComponent(RoomInfoDisplay).setInfo(info);
+
+            this.listGames.content.addChild(node);
+        }
+
+        this.listGames.scrollToTop();
     }
 }
