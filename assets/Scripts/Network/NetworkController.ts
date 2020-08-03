@@ -42,6 +42,7 @@ export default class NetworkController
 
         const onPlayFabLoginResult = (authToken: string) =>
         {
+            this.playFab.updateNickName(nickName);
             this.photon = new PhotonClient(this.nickName, authToken, onSuccess, onError);
         };
 

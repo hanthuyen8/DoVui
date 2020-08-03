@@ -41,6 +41,12 @@ export default class PlayFabClient
         PlayFabClientSDK.LoginWithCustomID(loginRequest, loginResult);
     }
 
+    public updateNickName(nickName: string)
+    {
+        let updateRequest = { DisplayName: nickName } as PlayFabClientModels.UpdateUserTitleDisplayNameRequest;
+        PlayFabClientSDK.UpdateUserTitleDisplayName(updateRequest, null);
+    }
+
     public getGameData(): Question[]
     {
         let request = {

@@ -22,10 +22,20 @@ export default class MultiLanguageLabel extends cc.Component
     private languageId: string = null;
     private languageTranslated: string = null;
 
+    private translateThisId: string = null;
+
     onLoad()
     {
         this.label = this.getComponent(cc.Label);
         this.refresh();
+    }
+
+    public split(keepIndex: number)
+    {
+        let values = this.languageDataId.split("|");
+        keepIndex = cc.misc.clampf(keepIndex, 0, values.length);
+        this.translateThisId = values[keepIndex];
+        this.languageId = null;
     }
 
     public refresh()
@@ -34,8 +44,11 @@ export default class MultiLanguageLabel extends cc.Component
         if (this.languageId == currentLang)
             return;
 
+        if (!this.translateThisId)
+            this.split(0);
+
         this.languageId = currentLang;
-        this.languageTranslated = Languages.Instance.translate(this.languageDataId);
+        this.languageTranslated = Languages.Instance.translate(this.translateThisId);
 
         if (this.label)
             this.label.string = this.languageTranslated;

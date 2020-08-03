@@ -32,7 +32,7 @@ export default class PhotonClient implements INetworkClient
 
     public getRooms(): RoomInfo[]
     {
-        if (!this.client.isInLobby)
+        if (!this.client.isInLobby())
             return;
 
         let roomInfo: RoomInfo[] = [];
@@ -50,7 +50,7 @@ export default class PhotonClient implements INetworkClient
 
     public forceUpdateRoomInfo(): void
     {
-        if (!this.client.isJoinedToRoom)
+        if (!this.client.isJoinedToRoom())
             return;
 
         this.updateRoom();
@@ -58,7 +58,7 @@ export default class PhotonClient implements INetworkClient
 
     public createRoom(players: number = 4, onCreateSuccess: (roomName: string) => void): void
     {
-        if (!this.client.isInLobby)
+        if (!this.client.isInLobby())
             return;
 
         this.onCreateRoomSuccess = onCreateSuccess;
@@ -68,7 +68,7 @@ export default class PhotonClient implements INetworkClient
 
     public joinRoom(roomName: string = null, onRoomUpdated: (players: PlayerInfo[]) => void): boolean
     {
-        if (this.client.isJoinedToRoom)
+        if (this.client.isJoinedToRoom())
         {
             if (this.client.myRoom().name == roomName)
             {
@@ -105,7 +105,9 @@ export default class PhotonClient implements INetworkClient
         this.logger.error(errorMsg);
         if (this.onConnectionError)
             this.onConnectionError();
+
         this.onConnectionError = null;
+        this.onConnectionSuccess = null;
     }
 
     private onStateChange(state: number): void
@@ -117,6 +119,7 @@ export default class PhotonClient implements INetworkClient
                 if (this.onConnectionSuccess)
                     this.onConnectionSuccess();
                 this.onConnectionSuccess = null;
+                this.onConnectionError = null;
                 break;
 
             case Photon.LoadBalancing.LoadBalancingClient.State.Joined:

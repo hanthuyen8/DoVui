@@ -698,7 +698,7 @@
       "__id__": 11
     },
     "_enabled": true,
-    "languageDataId": "inRoom_start",
+    "languageDataId": "inRoom_start|inRoom_ready",
     "_id": "791F05YuhBNqhNF5tdIfF9"
   },
   {
@@ -1011,7 +1011,7 @@
       "__id__": 18
     },
     "_enabled": true,
-    "languageDataId": "inRoom_delete",
+    "languageDataId": "inRoom_delete|inRoom_exit",
     "_id": "95zn+vDKxFbJYKc6xJZfyk"
   },
   {
