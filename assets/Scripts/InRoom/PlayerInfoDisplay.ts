@@ -6,6 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { PlayerInfo } from "../Data/Data";
+import MultiLanguageLabel from "../MultiLanguageLabel";
 
 const { ccclass, property } = cc._decorator;
 
@@ -21,9 +22,13 @@ export default class PlayerInfoDisplay extends cc.Component
     @property(cc.Label)
     private lblLevel: cc.Label = null;
 
-    public init(info : PlayerInfo): void
+    public init(info: PlayerInfo): void
     {
         this.lblNickName.string = info.nickName;
+
+        const levelMultiLang = this.lblLevel.getComponent(MultiLanguageLabel);
+        levelMultiLang.refresh();
+        this.lblLevel.string = `${levelMultiLang.LanguageTranslated} ${info.level}`;
     }
 
 }

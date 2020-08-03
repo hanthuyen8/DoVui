@@ -34,14 +34,10 @@ export default class RoomInfoDisplay extends cc.Component
         this.node.off(cc.Node.EventType.TOUCH_END, this.joinRoom, this);
     }
 
-    public setInfo(roomInfo: RoomInfo)
+    public init(roomInfo: RoomInfo)
     {
+        console.log(roomInfo);
         const lang = Languages.Instance;
-        const font = lang.getFont();
-
-        this.masterPlayerNickName.font = font;
-        this.playerCount.font = font;
-        this.gameType.font = font;
 
         const playerCountMultiLang = this.playerCount.getComponent(MultiLanguageLabel);
         playerCountMultiLang.refresh();

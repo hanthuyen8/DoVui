@@ -8,7 +8,6 @@ export default class Languages
 
     private langs: Language[] = [];
     private defaultLang: Language = null;
-    private font: cc.Font = null;
 
     private constructor()
     {
@@ -17,14 +16,9 @@ export default class Languages
         {
             if (json)
             {
-                if (this.font)
-                    cc.resources.release(this.font.name);
-
                 this.langs = json.json as Language[];
                 this.defaultLang = this.langs[0];
                 cc.resources.release(filePath);
-
-                this.langs.forEach(x => Languages.preloadFont(x));
             }
             else
             {
@@ -53,35 +47,10 @@ export default class Languages
         cc.error("Missing Lang String_Id: " + string_id);
         return `?missing ${string_id}`;
     }
-
-    public getFont(): cc.Font
-    {
-        return this.defaultLang.font;
-    }
-
-    private static preloadFont(lang: Language)
-    {
-        if (!lang.fontName || lang.font)
-            return;
-
-        cc.resources.load(lang.fontName, cc.TTFFont, (error, data: cc.TTFFont) =>
-        {
-            if (data)
-            {
-                lang.font = data;
-            }
-            else
-            {
-                cc.error(error);
-            }
-        });
-    }
 }
 
 class Language
 {
     public language: string = null;
     public data: any = null;
-    public fontName: string = null;
-    public font: cc.Font = null;
 }

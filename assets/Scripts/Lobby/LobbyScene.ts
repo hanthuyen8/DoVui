@@ -44,21 +44,6 @@ export default class LobbyScene extends cc.Component
         const lang = Languages.Instance;
 
         this.lblWelcome.string = NetworkController.getInstance().NickName;
-        // this.lblTitle.string = lang.lobby_title;
-        // this.lblJoinGames.string = lang.lobby_desc;
-        // this.btnCreateNewGame.getComponentInChildren(cc.Label).string = lang.lobby_new_game;
-
-        const newFont = Languages.Instance.getFont();
-        if (newFont)
-        {
-            this.labels = cc.Canvas.instance.getComponentsInChildren(cc.Label);
-            for (const lbl of this.labels)
-            {
-                if (lbl.font != newFont)
-                    lbl.font = newFont;
-            }
-        }
-
         this.getRooms();
     }
 
@@ -72,7 +57,7 @@ export default class LobbyScene extends cc.Component
         for (const info of roomInfo)
         {
             let node = cc.instantiate(this.roomInfoPrefab);
-            node.getComponent(RoomInfoDisplay).setInfo(info);
+            node.getComponent(RoomInfoDisplay).init(info);
 
             this.listGames.content.addChild(node);
         }

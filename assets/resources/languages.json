@@ -1,26 +1,36 @@
 [
     {
         "language": "en",
-        "fontName": "FredokaOne-Regular",
         "data": {
             "lobby_new_game": "Create New Game",
             "lobby_title": "LOBBY",
             "lobby_desc": "or join other players",
             "misc_players": "players",
             "misc_math": "Math",
-            "lobby_max_players" : "Max Players:"
+            "lobby_max_players": "Max Players:",
+            "inRoom_wait": "Wait for the opponents:",
+            "inRoom_start": "Start Game",
+            "inRoom_delete": "Delete Room",
+            "inRoom_ready": "Ready",
+            "inRoom_exit": "Exit",
+            "misc_level": "Level"
         }
     },
     {
         "language": "vi",
-        "fontName": "OpenSans-Bold",
         "data": {
             "lobby_new_game": "Tạo Phòng Mới",
-            "lobby_title": "PHÒNG ĐỢI",
+            "lobby_title": "SẢNH ĐỢI",
             "lobby_desc": "hoặc tham gia cùng người chơi khác",
             "misc_players": "người chơi",
             "misc_math": "Toán",
-            "lobby_max_players" : "Số người:"
+            "lobby_max_players": "Số người:",
+            "inRoom_wait": "Chờ đối thủ:",
+            "inRoom_start": "Vào Trận",
+            "inRoom_delete": "Xóa Phòng",
+            "inRoom_ready": "Sẵn Sàng",
+            "inRoom_exit": "Rời trận",
+            "misc_level": "Cấp"
         }
     }
 ]

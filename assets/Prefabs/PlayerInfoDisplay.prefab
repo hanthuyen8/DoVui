@@ -188,7 +188,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "3c73dd0d-9343-4614-adc7-6757dde1ea53"
     },
     "fileId": "99VJsK81FMoZMCZkTWdDzL",
     "sync": false
@@ -282,7 +282,7 @@
     "_lineHeight": 40,
     "_enableWrapText": false,
     "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
+      "__uuid__": "b769db06-cdc2-4ff5-9ba8-7421bbf0a248"
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
@@ -304,7 +304,7 @@
       "__id__": 5
     },
     "_enabled": true,
-    "languageDataId": "misc_players",
+    "languageDataId": "misc_level",
     "_id": ""
   },
   {
@@ -313,7 +313,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "3c73dd0d-9343-4614-adc7-6757dde1ea53"
     },
     "fileId": "74/MlipWlNYaXvOwq1bIuU",
     "sync": false
@@ -404,7 +404,7 @@
     "_lineHeight": 60,
     "_enableWrapText": false,
     "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
+      "__uuid__": "b769db06-cdc2-4ff5-9ba8-7421bbf0a248"
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
@@ -424,7 +424,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "3c73dd0d-9343-4614-adc7-6757dde1ea53"
     },
     "fileId": "22lOYO9w1PdK2jlaZFQl04",
     "sync": false
@@ -486,7 +486,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "3c73dd0d-9343-4614-adc7-6757dde1ea53"
     },
     "fileId": "fc5S3Vtn9DS5O9Cfq9YsKG",
     "sync": false

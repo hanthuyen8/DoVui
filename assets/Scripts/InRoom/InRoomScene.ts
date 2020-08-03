@@ -46,6 +46,7 @@ export default class InRoomScene extends cc.Component
 
     private updateRoom(players: PlayerInfo[])
     {
+        cc.log("111");
         this.playersContainer.node.removeAllChildren();
         for (const info of players)
         {

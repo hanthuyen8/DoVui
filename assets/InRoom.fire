@@ -17,7 +17,7 @@
         "__id__": 2
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [],
     "_prefab": null,
     "_opacity": 255,
@@ -594,7 +594,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 302.55,
+      "width": 287.92,
       "height": 75.6
     },
     "_anchorPoint": {
@@ -653,7 +653,7 @@
     "_lineHeight": 60,
     "_enableWrapText": true,
     "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
+      "__uuid__": "b769db06-cdc2-4ff5-9ba8-7421bbf0a248"
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
@@ -698,7 +698,7 @@
       "__id__": 11
     },
     "_enabled": true,
-    "languageDataId": "lobby_new_game",
+    "languageDataId": "inRoom_start",
     "_id": "791F05YuhBNqhNF5tdIfF9"
   },
   {
@@ -907,7 +907,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 334.07,
+      "width": 324.55,
       "height": 75.6
     },
     "_anchorPoint": {
@@ -966,7 +966,7 @@
     "_lineHeight": 60,
     "_enableWrapText": true,
     "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
+      "__uuid__": "b769db06-cdc2-4ff5-9ba8-7421bbf0a248"
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
@@ -1011,7 +1011,7 @@
       "__id__": 18
     },
     "_enabled": true,
-    "languageDataId": "lobby_new_game",
+    "languageDataId": "inRoom_delete",
     "_id": "95zn+vDKxFbJYKc6xJZfyk"
   },
   {
@@ -1133,7 +1133,7 @@
     "_lineHeight": 80,
     "_enableWrapText": false,
     "_N$file": {
-      "__uuid__": "a5f0c4f7-b8b7-4f60-a3e7-5ca759638b79"
+      "__uuid__": "b769db06-cdc2-4ff5-9ba8-7421bbf0a248"
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
@@ -1155,7 +1155,7 @@
       "__id__": 23
     },
     "_enabled": true,
-    "languageDataId": "lobby_max_players",
+    "languageDataId": "inRoom_wait",
     "_id": "24uVsTbGRCCKeWAbpEJWd2"
   },
   {
