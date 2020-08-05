@@ -321,7 +321,7 @@
     "btnStartOrReady": {
       "__id__": 9
     },
-    "btnDeleteOrExit": {
+    "btnRemoveOrLeave": {
       "__id__": 16
     },
     "_id": "0a47RuFQlOH6oDCwsD5KTz"
@@ -809,7 +809,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Btn - Delete Room",
+    "_name": "Btn - Remove Room",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -878,7 +878,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Lbl - Delete Room",
+    "_name": "Lbl - Remove Room",
     "_objFlags": 512,
     "_parent": {
       "__id__": 17
@@ -907,7 +907,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 324.55,
+      "width": 359.31,
       "height": 75.6
     },
     "_anchorPoint": {
@@ -960,8 +960,8 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Delete Room",
-    "_N$string": "Delete Room",
+    "_string": "Remove Room",
+    "_N$string": "Remove Room",
     "_fontSize": 55,
     "_lineHeight": 60,
     "_enableWrapText": true,
@@ -1011,7 +1011,7 @@
       "__id__": 18
     },
     "_enabled": true,
-    "languageDataId": "inRoom_delete|inRoom_exit",
+    "languageDataId": "inRoom_remove|inRoom_leave",
     "_id": "95zn+vDKxFbJYKc6xJZfyk"
   },
   {

@@ -10,9 +10,9 @@
             "lobby_max_players": "Max Players:",
             "inRoom_wait": "Wait for the opponents:",
             "inRoom_start": "Start Game",
-            "inRoom_delete": "Delete Room",
+            "inRoom_remove": "Delete Room",
             "inRoom_ready": "Ready",
-            "inRoom_exit": "Exit",
+            "inRoom_leave": "Leave",
             "misc_level": "Level"
         }
     },
@@ -27,9 +27,9 @@
             "lobby_max_players": "Số người:",
             "inRoom_wait": "Chờ đối thủ:",
             "inRoom_start": "Vào Trận",
-            "inRoom_delete": "Xóa Phòng",
+            "inRoom_remove": "Xóa Phòng",
             "inRoom_ready": "Sẵn Sàng",
-            "inRoom_exit": "Rời trận",
+            "inRoom_leave": "Rời trận",
             "misc_level": "Cấp"
         }
     }

@@ -448,7 +448,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Label - Nick Name",
+    "_name": "Label - Display Name",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -597,10 +597,10 @@
       "__id__": 1
     },
     "_enabled": true,
-    "masterPlayerAvatar": {
+    "masterAvatar": {
       "__id__": 3
     },
-    "masterPlayerNickName": {
+    "masterDisplayName": {
       "__id__": 14
     },
     "playerCount": {

@@ -7,6 +7,7 @@
 
 import * as GameSettings from "./GameSettings"
 import NetworkController from "./Network/NetworkController";
+import LobbyScene from "./Lobby/LobbyScene";
 
 const { ccclass, property } = cc._decorator;
 
@@ -82,7 +83,7 @@ export default class NameScene extends cc.Component
             this.infoLbl.string = "Connect Successful.";
             cc.sys.localStorage.setItem("userName", userName);
             cc.sys.localStorage.setItem("nickName", nickName);
-            cc.director.loadScene("Lobby");
+            LobbyScene.GoToLobby();
         };
         NetworkController.getInstance().connect(userName, nickName, onConnectSuccess, onConnectError);
     }

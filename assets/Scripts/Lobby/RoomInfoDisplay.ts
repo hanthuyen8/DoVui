@@ -9,6 +9,7 @@ import Languages from "../Languages";
 import MultiLanguageLabel from "../MultiLanguageLabel";
 import { RoomInfo } from "../Data/Data";
 import InRoomScene from "../InRoom/InRoomScene";
+import NetworkController, { NetworkEvent } from "../Network/NetworkController";
 
 const { ccclass, property } = cc._decorator;
 
@@ -16,10 +17,10 @@ const { ccclass, property } = cc._decorator;
 export default class RoomInfoDisplay extends cc.Component
 {
     @property(cc.Sprite)
-    private masterPlayerAvatar: cc.Sprite = null;
+    private masterAvatar: cc.Sprite = null;
 
     @property(cc.Label)
-    private masterPlayerNickName: cc.Label = null;
+    private masterDisplayName: cc.Label = null;
 
     @property(cc.Label)
     private playerCount: cc.Label = null;
@@ -32,17 +33,17 @@ export default class RoomInfoDisplay extends cc.Component
     onDestroy()
     {
         this.node.off(cc.Node.EventType.TOUCH_END, this.joinRoom, this);
+        cc.systemEvent.off(NetworkEvent.LOBBY_JOINED_ROOM, this.joinedRoom, this);
     }
 
     public init(roomInfo: RoomInfo)
     {
         console.log(roomInfo);
-        const lang = Languages.Instance;
 
         const playerCountMultiLang = this.playerCount.getComponent(MultiLanguageLabel);
         playerCountMultiLang.refresh();
         this.playerCount.string = `${roomInfo.playerCount}/${roomInfo.maxPlayers} ${playerCountMultiLang.LanguageTranslated}`;
-        this.masterPlayerNickName.string = roomInfo.masterPlayerNickName;
+        this.masterDisplayName.string = roomInfo.masterDisplayName;
 
         this.roomName = roomInfo.roomName;
 
@@ -54,6 +55,12 @@ export default class RoomInfoDisplay extends cc.Component
         if (!this.roomName)
             return;
 
-        InRoomScene.JoinThisRoom(this.roomName);
+        cc.systemEvent.once(NetworkEvent.LOBBY_JOINED_ROOM, this.joinedRoom, this);
+        NetworkController.getClient().joinRoom(this.roomName);
+    }
+
+    private joinedRoom(roomInfo: RoomInfo)
+    {
+        InRoomScene.goToRoom(roomInfo);
     }
 }

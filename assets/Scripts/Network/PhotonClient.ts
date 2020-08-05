@@ -1,7 +1,47 @@
-import { INetworkClient } from "./NetworkController";
+import { INetworkClient, NetworkEvent, MessageCode } from "./NetworkController";
 import { PlayerInfo, RoomInfo } from "../Data/Data";
 
 export const PHOTON_APP_ID = "8abf5256-456b-4a24-88ee-0b1f56f6f557";
+
+function roomInfoConvert(info: Photon.LoadBalancing.RoomInfo): RoomInfo
+{
+    const room = new RoomInfo();
+    room.playerCount = info.playerCount;
+    room.roomName = info.name;
+    room.maxPlayers = info.maxPlayers;
+    room.masterDisplayName = info.name.split("#")[0];
+    return room;
+}
+
+function roomsInfoConvert(infos: Photon.LoadBalancing.RoomInfo[]): RoomInfo[]
+{
+    const roomInfo: RoomInfo[] = [];
+    for (const info of infos)
+    {
+        roomInfo.push(roomInfoConvert(info));
+    }
+    return roomInfo;
+}
+
+function actorConvert(actor: Photon.LoadBalancing.Actor): PlayerInfo
+{
+    const player = new PlayerInfo();
+    player.displayName = actor.name;
+    player.inRoomUserId = actor.actorNr;
+    player.isRoomMaster = actor.actorNr == 1;
+
+    return player;
+}
+
+function actorsConvert(actors: Photon.LoadBalancing.Actor[]): PlayerInfo[]
+{
+    const players: PlayerInfo[] = [];
+    for (const actor of actors)
+    {
+        players.push(actorConvert(actor));
+    }
+    return players;
+}
 
 export default class PhotonClient implements INetworkClient
 {
@@ -9,70 +49,59 @@ export default class PhotonClient implements INetworkClient
     private client: Photon.LoadBalancing.LoadBalancingClient;
     private onConnectionSuccess: Function = null;
     private onConnectionError: Function = null;
-    private onCreateRoomSuccess: (roomName: string) => void = null;
-    private onRoomUpdated: (players: PlayerInfo[]) => void = null;
 
-    constructor(nickName: string, auth: string, onSuccess: Function, onError: Function)
+    constructor(displayName: string, auth: string, onSuccess: Function, onError: Function)
     {
         this.client = new Photon.LoadBalancing.LoadBalancingClient(Photon.ConnectionProtocol.Ws, PHOTON_APP_ID, "1.0");
         this.onConnectionSuccess = onSuccess;
         this.onConnectionError = onError;
         this.logger = new Exitgames.Common.Logger("Demo:");
 
+        this.client.onEvent = this.onEvent.bind(this);
         this.client.onError = this.onError.bind(this);
         this.client.onStateChange = this.onStateChange.bind(this);
         this.client.onRoomListUpdate = this.onRoomListUpdate.bind(this);
-        this.client.onActorJoin = this.updateRoom.bind(this);
-        this.client.onActorLeave = this.updateRoom.bind(this);
+        this.client.onActorJoin = this.onActorJoin.bind(this);
+        this.client.onActorLeave = this.onActorLeave.bind(this);
 
         this.client.setCustomAuthentication(auth, Photon.LoadBalancing.Constants.CustomAuthenticationType.Custom);
-        this.client.myActor().setName(nickName);
+        this.client.myActor().setName(displayName);
         this.client.connectToRegionMaster("asia");
     }
+
+    public getMyUserIdInRoom(): number { return this.client.myActor().actorNr; }
 
     public getRooms(): RoomInfo[]
     {
         if (!this.client.isInLobby())
-            return;
+            return [];
 
-        let roomInfo: RoomInfo[] = [];
-        for (const room of this.client.availableRooms())
-        {
-            let info = new RoomInfo();
-            info.playerCount = room.playerCount;
-            info.roomName = room.name;
-            info.maxPlayers = room.maxPlayers;
-            info.masterPlayerNickName = room.name.split("#")[0];
-            roomInfo.push(info);
-        }
-        return roomInfo;
+        return roomsInfoConvert(this.client.availableRooms());
     }
 
-    public forceUpdateRoomInfo(): void
+    public getPlayersInRoom(): PlayerInfo[]
     {
-        if (!this.client.isJoinedToRoom())
+        if (!this.client.isJoinedToRoom)
             return;
 
-        this.updateRoom();
+        return actorsConvert(this.client.myRoomActorsArray());
     }
 
-    public createRoom(players: number = 4, onCreateSuccess: (roomName: string) => void): void
+    public createRoom(players: number = 4): void
     {
         if (!this.client.isInLobby())
             return;
 
-        this.onCreateRoomSuccess = onCreateSuccess;
         const roomName = `${this.client.myActor().name}#${this.client.getUserId()}`;
-        this.client.createRoom(roomName, { maxPlayers: players, emptyRoomLiveTime: 1 });
+        this.client.createRoom(roomName, { maxPlayers: players, emptyRoomLiveTime: 1000 });
     }
 
-    public joinRoom(roomName: string = null, onRoomUpdated: (players: PlayerInfo[]) => void): boolean
+    public joinRoom(roomName: string = null): boolean
     {
         if (this.client.isJoinedToRoom())
         {
             if (this.client.myRoom().name == roomName)
             {
-                this.onRoomUpdated = onRoomUpdated;
                 return true;
             }
             return false;
@@ -80,7 +109,6 @@ export default class PhotonClient implements INetworkClient
 
         if (roomName)
         {
-            this.onRoomUpdated = onRoomUpdated;
             const rooms = this.client.availableRooms();
             const room = rooms.find(x => x.name == roomName);
             if (room && room.isOpen && room.playerCount < room.maxPlayers)
@@ -98,7 +126,45 @@ export default class PhotonClient implements INetworkClient
         this.client.myRoom().setIsOpen(false);
     }
 
+    public leaveRoom(): void
+    {
+        if (this.client.myActor().actorNr == 1)
+        {
+            const room = this.client.myRoom();
+            room.setIsOpen(false);
+            room.setIsVisible(false);
+            cc.systemEvent.emit(NetworkEvent.ROOM_REMOVED);
+        }
+        this.client.leaveRoom();
+    }
+
+    sendMessage(eventCode: MessageCode, data: any): void
+    {
+        this.client.raiseEvent(eventCode, data);
+    }
+
     //#region Internal Functions
+
+    private onEvent(code: number, content: any, actorNr: number): void
+    {
+        let eventName: string = null;
+        switch (code)
+        {
+            case MessageCode.GAME_MESSAGE:
+                eventName = NetworkEvent.GAME_MESSAGE;
+                break;
+            case MessageCode.ROOM_MESSAGE:
+                eventName = NetworkEvent.ROOM_MESSAGE;
+                break;
+        }
+
+        if (eventName)
+        {
+            const map : any = this.client.myRoomActors();
+            const player = actorConvert(map[actorNr]);
+            cc.systemEvent.emit(eventName, content, player);
+        }
+    }
 
     private onError(errorCode: number, errorMsg: string): void
     {
@@ -125,9 +191,7 @@ export default class PhotonClient implements INetworkClient
             case Photon.LoadBalancing.LoadBalancingClient.State.Joined:
                 const actor = this.client.myActor();
                 this.logger.info("Welcome " + actor.actorNr);
-
-                if (this.client.myRoomMasterActorNr() == actor.actorNr && this.onCreateRoomSuccess)
-                    this.onCreateRoomSuccess(this.client.myRoom().name);
+                cc.systemEvent.emit(NetworkEvent.LOBBY_JOINED_ROOM, roomInfoConvert(this.client.myRoom()));
 
                 break;
 
@@ -144,32 +208,23 @@ export default class PhotonClient implements INetworkClient
     {
         if (roomsAdded.length > 0)
         {
-            // Tự động join vào room mà mình đã khởi tạo
-            const userId = this.client.getUserId();
-            const room = roomsAdded.find(x => x.name == userId)
-            if (room && this.onCreateRoomSuccess)
-            {
-                //this.onCreateRoomSuccess(room.name);
-            }
+            cc.systemEvent.emit(NetworkEvent.LOBBY_ADD_ROOM, roomsInfoConvert(roomsAdded));
+        }
+
+        if (roomsRemoved.length > 0)
+        {
+            cc.systemEvent.emit(NetworkEvent.LOBBY_REMOVE_ROOM, roomsRemoved.map(x => x.name));
         }
     }
 
-    private updateRoom(): void
+    private onActorJoin(actor: Photon.LoadBalancing.Actor): void
     {
-        if (!this.onRoomUpdated)
-            return;
+        cc.systemEvent.emit(NetworkEvent.ROOM_ADD_PLAYER, actorConvert(actor));
+    }
 
-        let players: PlayerInfo[] = [];
-        for (const actor of this.client.myRoomActorsArray() as Photon.LoadBalancing.Actor[])
-        {
-            let info = new PlayerInfo();
-            info.isRoomMaster = actor.actorNr == 1;
-            info.nickName = actor.name;
-            info.userId = actor.actorNr;
-
-            players.push(info);
-        }
-        this.onRoomUpdated(players);
+    private onActorLeave(actor: Photon.LoadBalancing.Actor, cleanup: boolean): void
+    {
+        cc.systemEvent.emit(NetworkEvent.ROOM_REMOVE_PLAYER, actorConvert(actor));
     }
 
     //#endregion

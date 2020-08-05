@@ -17,18 +17,32 @@ export default class PlayerInfoDisplay extends cc.Component
     private sprAvatar: cc.Sprite = null;
 
     @property(cc.Label)
-    private lblNickName: cc.Label = null;
+    private lblDisplayName: cc.Label = null;
 
     @property(cc.Label)
     private lblLevel: cc.Label = null;
 
+    public get InRoomUserId(): number { return this.inRoomUserId; }
+    private inRoomUserId: number = 0;
+
     public init(info: PlayerInfo): void
     {
-        this.lblNickName.string = info.nickName;
+        this.inRoomUserId = info.inRoomUserId;
+        this.lblDisplayName.string = info.displayName;
 
         const levelMultiLang = this.lblLevel.getComponent(MultiLanguageLabel);
         levelMultiLang.refresh();
         this.lblLevel.string = `${levelMultiLang.LanguageTranslated} ${info.level}`;
+
+        if (CC_DEBUG)
+        {
+            this.lblLevel.string = "UserId: " + info.inRoomUserId;
+        }
+    }
+
+    public setReady(isReady: boolean)
+    {
+        this.node.color = isReady ? cc.Color.GREEN : cc.Color.WHITE;
     }
 
 }

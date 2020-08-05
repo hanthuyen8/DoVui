@@ -7,15 +7,17 @@ export default class PlayFabClient
 {
     private playFabId: string = null;
     private playFabUserName: string = null;
+    private playFabDisplayName: string = null;
 
     public get PlayFabId(): string { return this.playFabId; }
     public get PlayFabUserName(): string { return this.playFabUserName; }
     private getPhotonAuthTokenFormat(token: string) { return `username=${this.playFabId}&token=${token}`; }
 
-    public constructor(playFabUserName: string)
+    public constructor(playFabUserName: string, playFabDisplayName: string)
     {
         this.playFabUserName = playFabUserName;
         PlayFab.settings.titleId = PLAYFAB_TITLE_ID;
+        this.playFabDisplayName = playFabDisplayName;
     }
 
     public login(onSuccess: (authToken: string) => void, onError: (msg: string) => void): void
@@ -30,6 +32,11 @@ export default class PlayFabClient
             if (result && result.data)
             {
                 this.playFabId = result.data.PlayFabId;
+                if (result.data.NewlyCreated)
+                {
+                    const updateDisplayNameRequest = { Data: { "displayName": this.playFabDisplayName } } as PlayFabClientModels.UpdateUserDataRequest;
+                    PlayFabClientSDK.UpdateUserData(updateDisplayNameRequest, null);
+                }
                 this.getAuthTokenForPhoton(onSuccess, onError);
             }
             else

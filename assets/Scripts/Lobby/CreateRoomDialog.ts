@@ -6,8 +6,9 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import * as GameSettings from "../GameSettings"
-import NetworkController from "../Network/NetworkController";
+import NetworkController, { NetworkEvent } from "../Network/NetworkController";
 import InRoomScene from "../InRoom/InRoomScene";
+import { RoomInfo } from "../Data/Data";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -39,6 +40,11 @@ export default class CreateRoomDialog extends cc.Component
         this.node.setPosition(cc.Vec2.ZERO);
     }
 
+    onDestroy()
+    {
+        cc.systemEvent.off(NetworkEvent.LOBBY_JOINED_ROOM, this.joinedRoom, this);
+    }
+
     public openDialog(): void
     {
         this.node.active = true;
@@ -56,6 +62,12 @@ export default class CreateRoomDialog extends cc.Component
 
     private createRoom()
     {
-        NetworkController.getInstance().createRoom_AutoClampPlayersNumber(this.maxPlayers, (roomName) => { InRoomScene.JoinThisRoom(roomName); });
+        cc.systemEvent.once(NetworkEvent.LOBBY_JOINED_ROOM, this.joinedRoom, this);
+        NetworkController.getClient().createRoom( cc.misc.clampf(this.maxPlayers, GameSettings.MIN_PLAYER_COUNT, GameSettings.MAX_PLAYER_COUNT));
+    }
+
+    private joinedRoom(roomInfo : RoomInfo)
+    {
+        InRoomScene.goToRoom(roomInfo);
     }
 }

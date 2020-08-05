@@ -320,7 +320,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Label - Nick Name",
+    "_name": "Label - Display Name",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -472,7 +472,7 @@
     "sprAvatar": {
       "__id__": 3
     },
-    "lblNickName": {
+    "lblDisplayName": {
       "__id__": 10
     },
     "lblLevel": {

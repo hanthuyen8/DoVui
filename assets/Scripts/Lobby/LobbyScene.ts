@@ -7,16 +7,18 @@
 
 import RoomInfoDisplay from "./RoomInfoDisplay";
 import Languages from "../Languages";
-import NetworkController from "../Network/NetworkController";
-import CreateRoomDialog from "./CreateRoomDialog";
+import NetworkController, { NetworkEvent } from "../Network/NetworkController";
+import { RoomInfo } from "../Data/Data";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class LobbyScene extends cc.Component
 {
-    @property(CreateRoomDialog)
-    private createRoomDialog: CreateRoomDialog = null;
+    public static GoToLobby(): void
+    {
+        cc.director.loadScene("Lobby");
+    }
 
     @property(cc.Prefab)
     private roomInfoPrefab: cc.Prefab = null;
@@ -24,36 +26,55 @@ export default class LobbyScene extends cc.Component
     @property(cc.Label)
     private lblWelcome: cc.Label = null;
 
-    @property(cc.Label)
-    private lblTitle: cc.Label = null;
-
-    @property(cc.Label)
-    private lblJoinGames: cc.Label = null;
-
-    @property(cc.Button)
-    private btnCreateNewGame: cc.Button = null;
-
     @property(cc.ScrollView)
     private listGames: cc.ScrollView = null;
 
-    private labels: cc.Label[] = [];
+    private roomsInfo: RoomInfo[] = [];
+    private currentFilter: number = 0;
 
     onLoad()
     {
         Languages.Instance.setDefaultLanguage("vi");
-        const lang = Languages.Instance;
 
-        this.lblWelcome.string = NetworkController.getInstance().NickName;
-        this.getRooms();
+        this.lblWelcome.string = NetworkController.getInstance().DisplayName;
+        this.updateRoomList();
     }
 
-    private getRooms()
+    private updateRoomList()
     {
-        const roomInfo = NetworkController.getInstance().getRooms();
-        let roomInfoDisplay = this.roomInfoPrefab.data.getComponent(RoomInfoDisplay);
-        if (!roomInfoDisplay)
+        this.roomsInfo = NetworkController.getClient().getRooms();
+        this.filterRooms(null, this.currentFilter);
+    }
+
+    private filterRooms(event: cc.Event.EventTouch, maxPlayers: number)
+    {
+        if (this.roomsInfo.length == 0)
             return;
 
+        switch (+maxPlayers)
+        {
+            case 2:
+                this.renderRoomInfo(this.roomsInfo.filter(x => x.maxPlayers === 2));
+                this.currentFilter = 2;
+                break;
+            case 3:
+                this.renderRoomInfo(this.roomsInfo.filter(x => x.maxPlayers === 3));
+                this.currentFilter = 3;
+                break;
+            case 4:
+                this.renderRoomInfo(this.roomsInfo.filter(x => x.maxPlayers === 4));
+                this.currentFilter = 4;
+                break;
+            default:
+                this.renderRoomInfo(this.roomsInfo);
+                this.currentFilter = 0;
+                break;
+        }
+    }
+
+    private renderRoomInfo(roomInfo: RoomInfo[])
+    {
+        this.listGames.content.removeAllChildren();
         for (const info of roomInfo)
         {
             let node = cc.instantiate(this.roomInfoPrefab);

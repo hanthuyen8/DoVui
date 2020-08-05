@@ -1,3 +1,4 @@
+/// <reference path="./assets/Scripts/Network/PlayFab/Typings/PlayFab/CloudScript.d.ts" />
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Welcome to your first Cloud Script revision!
@@ -35,7 +36,7 @@
 // (https://api.playfab.com/Documentation/Client/method/ExecuteCloudScript)
 // "context" contains additional information when the Cloud Script function is called from a PlayStream action.
 handlers.helloWorld = function (args, context) {
-    
+
     // The pre-defined "currentPlayerId" variable is initialized to the PlayFab ID of the player logged-in on the game client. 
     // Cloud Script handles authenticating the player automatically.
     var message = "Hello " + currentPlayerId + "!";
@@ -62,9 +63,9 @@ handlers.helloWorld = function (args, context) {
 handlers.makeAPICall = function (args, context) {
     var request = {
         PlayFabId: currentPlayerId, Statistics: [{
-                StatisticName: "Level",
-                Value: 2
-            }]
+            StatisticName: "Level",
+            Value: 2
+        }]
     };
     // The pre-defined "server" object has functions corresponding to each PlayFab server API 
     // (https://api.playfab.com/Documentation/Server). It is automatically 
@@ -107,7 +108,7 @@ handlers.makeHTTPRequest = function (args, context) {
     var headers = {
         "X-MyCustomHeader": "Some Value"
     };
-    
+
     var body = {
         input: args,
         userId: currentPlayerId,
@@ -127,15 +128,15 @@ handlers.makeHTTPRequest = function (args, context) {
 // This is a simple example of a function that is called from a
 // PlayStream event action. (https://playfab.com/introducing-playstream/)
 handlers.handlePlayStreamEventAndProfile = function (args, context) {
-    
+
     // The event that triggered the action 
     // (https://api.playfab.com/playstream/docs/PlayStreamEventModels)
     var psEvent = context.playStreamEvent;
-    
+
     // The profile data of the player associated with the event
     // (https://api.playfab.com/playstream/docs/PlayStreamProfileModels)
     var profile = context.playerProfile;
-    
+
     // Post data about the event to an external API
     var content = JSON.stringify({ user: profile.PlayerId, event: psEvent.EventName });
     var response = http.request('https://httpbin.org/status/200', 'post', content, 'application/json', null);
@@ -157,7 +158,7 @@ handlers.handlePlayStreamEventAndProfile = function (args, context) {
 handlers.completedLevel = function (args, context) {
     var level = args.levelName;
     var monstersKilled = args.monstersKilled;
-    
+
     var updateUserDataResult = server.UpdateUserInternalData({
         PlayFabId: currentPlayerId,
         Data: {
@@ -168,9 +169,9 @@ handlers.completedLevel = function (args, context) {
     log.debug("Set lastLevelCompleted for player " + currentPlayerId + " to " + level);
     var request = {
         PlayFabId: currentPlayerId, Statistics: [{
-                StatisticName: "level_monster_kills",
-                Value: monstersKilled
-            }]
+            StatisticName: "level_monster_kills",
+            Value: monstersKilled
+        }]
     };
     server.UpdatePlayerStatistics(request);
     log.debug("Updated level_monster_kills stat for player " + currentPlayerId + " to " + monstersKilled);
@@ -230,9 +231,9 @@ function processPlayerMove(playerMove) {
     movesMade += 1;
     var request = {
         PlayFabId: currentPlayerId, Statistics: [{
-                StatisticName: "movesMade",
-                Value: movesMade
-            }]
+            StatisticName: "movesMade",
+            Value: movesMade
+        }]
     };
     server.UpdatePlayerStatistics(request);
     server.UpdateUserInternalData({
@@ -318,3 +319,8 @@ handlers.RoomEventRaised = function (args) {
             break;
     }
 };
+
+handlers.RemoveTestPlayer = function () {
+    const deletePlayerRequest = { PlayFabId: currentPlayerId };
+            server.DeletePlayer(deletePlayerRequest);
+}
