@@ -9,7 +9,7 @@ function roomInfoConvert(info: Photon.LoadBalancing.RoomInfo): RoomInfo
     room.playerCount = info.playerCount;
     room.roomName = info.name;
     room.maxPlayers = info.maxPlayers;
-    room.masterDisplayName = info.name.split("#")[0];
+    room.masterDisplayName = info.getCustomProperty("roomMaster");
     return room;
 }
 
@@ -92,8 +92,7 @@ export default class PhotonClient implements INetworkClient
         if (!this.client.isInLobby())
             return;
 
-        const roomName = `${this.client.myActor().name}#${this.client.getUserId()}`;
-        this.client.createRoom(roomName, { maxPlayers: players, emptyRoomLiveTime: 1000 });
+        this.client.createRoom(null, { maxPlayers: players, customGameProperties: { roomMaster: this.client.myActor().name } });
     }
 
     public joinRoom(roomName: string = null): boolean
@@ -133,14 +132,13 @@ export default class PhotonClient implements INetworkClient
             const room = this.client.myRoom();
             room.setIsOpen(false);
             room.setIsVisible(false);
-            cc.systemEvent.emit(NetworkEvent.ROOM_REMOVED);
         }
         this.client.leaveRoom();
     }
 
-    sendMessage(eventCode: MessageCode, data: any): void
+    sendMessage(eventCode: MessageCode, data: any, sendTo?: number[]): void
     {
-        this.client.raiseEvent(eventCode, data);
+        this.client.raiseEvent(eventCode, data, sendTo ? { targetActors: sendTo } : null);
     }
 
     //#region Internal Functions
@@ -160,7 +158,7 @@ export default class PhotonClient implements INetworkClient
 
         if (eventName)
         {
-            const map : any = this.client.myRoomActors();
+            const map: any = this.client.myRoomActors();
             const player = actorConvert(map[actorNr]);
             cc.systemEvent.emit(eventName, content, player);
         }
@@ -181,7 +179,6 @@ export default class PhotonClient implements INetworkClient
         switch (state)
         {
             case Photon.LoadBalancing.LoadBalancingClient.State.JoinedLobby:
-                this.logger.info("Welcome " + this.client.getUserId());
                 if (this.onConnectionSuccess)
                     this.onConnectionSuccess();
                 this.onConnectionSuccess = null;
@@ -189,8 +186,6 @@ export default class PhotonClient implements INetworkClient
                 break;
 
             case Photon.LoadBalancing.LoadBalancingClient.State.Joined:
-                const actor = this.client.myActor();
-                this.logger.info("Welcome " + actor.actorNr);
                 cc.systemEvent.emit(NetworkEvent.LOBBY_JOINED_ROOM, roomInfoConvert(this.client.myRoom()));
 
                 break;

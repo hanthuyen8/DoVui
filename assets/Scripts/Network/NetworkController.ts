@@ -23,9 +23,6 @@ export class NetworkEvent
     /** Return: PlayerInfo[] */
     public static readonly ROOM_REMOVE_PLAYER = "ROOM_REMOVE_PLAYER";
 
-    /** Return: nothing */
-    public static readonly ROOM_REMOVED = "ROOM_REMOVED";
-
     /** Return: any(data), PlayerInfo(sender) */
     public static readonly GAME_MESSAGE = "GAME_MESSAGE";
 
@@ -42,7 +39,7 @@ export interface INetworkClient
     joinRoom(roomName: string): void;
     closeRoom(): void;
     leaveRoom(): void;
-    sendMessage(eventCode: MessageCode, data: any): void;
+    sendMessage(eventCode: MessageCode, data: any, sendTo?: number[]): void;
 }
 
 export default class NetworkController

@@ -12,30 +12,20 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class MultiLanguageLabel extends cc.Component
 {
-    public get LanguageDataId(): string { return this.languageDataId; }
-    public get LanguageTranslated(): string { return this.languageTranslated; }
+    public get StringId(): string { return this.languageDataId; }
+    public get StringTranslated(): string { return this.stringTranslated; }
 
     @property
     private languageDataId: string = "";
 
     private label: cc.Label = null;
     private languageId: string = null;
-    private languageTranslated: string = null;
-
-    private translateThisId: string = null;
+    private stringTranslated: string = null;
 
     onLoad()
     {
         this.label = this.getComponent(cc.Label);
         this.refresh();
-    }
-
-    public split(keepIndex: number)
-    {
-        let values = this.languageDataId.split("|");
-        keepIndex = cc.misc.clampf(keepIndex, 0, values.length);
-        this.translateThisId = values[keepIndex];
-        this.languageId = null;
     }
 
     public refresh()
@@ -44,13 +34,18 @@ export default class MultiLanguageLabel extends cc.Component
         if (this.languageId == currentLang)
             return;
 
-        if (!this.translateThisId)
-            this.split(0);
-
         this.languageId = currentLang;
-        this.languageTranslated = Languages.Instance.translate(this.translateThisId);
+        this.stringTranslated = Languages.Instance.translate(this.languageDataId);
 
         if (this.label)
-            this.label.string = this.languageTranslated;
+            this.label.string = this.stringTranslated;
+    }
+
+    public changeString(stringId : string)
+    {
+        this.stringTranslated = Languages.Instance.translate(stringId);
+
+        if (this.label)
+            this.label.string = this.stringTranslated;
     }
 }

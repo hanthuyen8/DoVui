@@ -38,11 +38,9 @@ export default class RoomInfoDisplay extends cc.Component
 
     public init(roomInfo: RoomInfo)
     {
-        console.log(roomInfo);
-
         const playerCountMultiLang = this.playerCount.getComponent(MultiLanguageLabel);
         playerCountMultiLang.refresh();
-        this.playerCount.string = `${roomInfo.playerCount}/${roomInfo.maxPlayers} ${playerCountMultiLang.LanguageTranslated}`;
+        this.playerCount.string = `${roomInfo.playerCount}/${roomInfo.maxPlayers} ${playerCountMultiLang.StringTranslated}`;
         this.masterDisplayName.string = roomInfo.masterDisplayName;
 
         this.roomName = roomInfo.roomName;

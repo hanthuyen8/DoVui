@@ -13,6 +13,7 @@
             "inRoom_remove": "Delete Room",
             "inRoom_ready": "Ready",
             "inRoom_leave": "Leave",
+            "inRoom_cancel": "Cancel",
             "misc_level": "Level"
         }
     },
@@ -29,7 +30,8 @@
             "inRoom_start": "Vào Trận",
             "inRoom_remove": "Xóa Phòng",
             "inRoom_ready": "Sẵn Sàng",
-            "inRoom_leave": "Rời trận",
+            "inRoom_leave": "Rời Trận",
+            "inRoom_cancel": "Hủy Bỏ",
             "misc_level": "Cấp"
         }
     }

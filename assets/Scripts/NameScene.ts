@@ -40,7 +40,7 @@ export default class NameScene extends cc.Component
         {
             this.nameEdit.string = storedNickName;
             if (this.useCache)
-                this.submit(storedUserName, storedNickName);
+                this.connect(storedUserName, storedNickName);
         }
     }
 
@@ -63,10 +63,10 @@ export default class NameScene extends cc.Component
             }
             nickName = newName;
         }
-        this.submit(Guid.newGuid().toString(), nickName);
+        this.connect(Guid.newGuid().toString(), nickName);
     }
 
-    private submit(userName: string, nickName: string)
+    private connect(userName: string, nickName: string)
     {
         this.nameEdit.enabled = false;
         this.infoLbl.string = "Connecting to Mars...";

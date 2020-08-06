@@ -32,7 +32,7 @@ export default class PlayerInfoDisplay extends cc.Component
 
         const levelMultiLang = this.lblLevel.getComponent(MultiLanguageLabel);
         levelMultiLang.refresh();
-        this.lblLevel.string = `${levelMultiLang.LanguageTranslated} ${info.level}`;
+        this.lblLevel.string = `${levelMultiLang.StringTranslated} ${info.level}`;
 
         if (CC_DEBUG)
         {

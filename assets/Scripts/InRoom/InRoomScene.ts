@@ -5,12 +5,12 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import * as GameSettings from "../GameSettings";
 import PlayerInfoDisplay from "./PlayerInfoDisplay";
 import NetworkController, { NetworkEvent, MessageCode } from "../Network/NetworkController";
 import { PlayerInfo, RoomInfo } from "../Data/Data";
 import MultiLanguageLabel from "../MultiLanguageLabel";
 import LobbyScene from "../Lobby/LobbyScene";
+import Chat, { TextAnchor } from "./Chat";
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,13 +31,24 @@ export default class InRoomScene extends cc.Component
     private playersContainer: cc.Layout = null;
 
     @property(cc.Button)
-    private btnStartOrReady: cc.Button = null;
+    private btnReady: cc.Button = null;
+    private lblReady: MultiLanguageLabel = null;
 
     @property(cc.Button)
-    private btnRemoveOrLeave: cc.Button = null;
+    private btnLeave: cc.Button = null;
 
+    @property(Chat)
+    private chatWindow: Chat = null;
+
+    @property private stringId_Ready: string = "inRoom_ready";
+    @property private stringId_Start: string = "inRoom_start";
+    @property private stringId_Remove: string = "inRoom_remove";
+    @property private stringId_Cancel: string = "inRoom_cancel";
+
+    private roomInfo: RoomInfo = null;
     private isRoomMaster: boolean = false;
     private isReady: boolean = false;
+    private totalNumberOfReady: number = 0;
 
     private players: Map<number, PlayerInfoDisplay> = new Map();
     private myUserId: number = 0;
@@ -46,48 +57,38 @@ export default class InRoomScene extends cc.Component
     {
         cc.systemEvent.on(NetworkEvent.ROOM_ADD_PLAYER, this.onNewPlayerJoined, this);
         cc.systemEvent.on(NetworkEvent.ROOM_REMOVE_PLAYER, this.onNewPlayerRemoved, this);
-        cc.systemEvent.once(NetworkEvent.ROOM_REMOVED, this.onRoomRemoved, this);
         cc.systemEvent.on(NetworkEvent.ROOM_MESSAGE, this.onReceiveMessage, this);
 
-        const roomInfo = InRoomScene.joinedRoom;
-        if (!roomInfo)
+        this.roomInfo = InRoomScene.joinedRoom;
+        if (!this.roomInfo)
             return;
 
         const network = NetworkController.getClient();
         this.myUserId = network.getMyUserIdInRoom();
-        this.updateRoom(network.getPlayersInRoom());
+        const players = network.getPlayersInRoom();
 
-        if (roomInfo.masterDisplayName === NetworkController.getInstance().DisplayName)
+        // Add Players
+        players.sort((a, b) => a.inRoomUserId - b.inRoomUserId);
+        players.forEach(x => this.addPlayer(x));
+        const myName = NetworkController.getInstance().DisplayName;
+        if (this.roomInfo.masterDisplayName === myName)
         {
             this.isRoomMaster = true;
+            this.btnReady.interactable = false;
+            this.isReady = true;
+            this.totalNumberOfReady = 1;
+            this.players.get(this.myUserId).setReady(true);
         }
+        this.lblReady = this.btnReady.getComponentInChildren(MultiLanguageLabel);
+        this.chatWindow.init((text: string) => this.sendMessage(new MessageChat(text)));
     }
 
     start()
     {
         if (this.isRoomMaster)
         {
-            this.btnStartOrReady.node.on(cc.Node.EventType.TOUCH_END, this.startGame, this);
-            let lblStart = this.btnStartOrReady.getComponentInChildren(MultiLanguageLabel);
-            lblStart.split(0);
-            lblStart.refresh();
-
-            this.btnRemoveOrLeave.node.on(cc.Node.EventType.TOUCH_END, this.removeRoom, this);
-            let lblDelete = this.btnRemoveOrLeave.getComponentInChildren(MultiLanguageLabel);
-            lblDelete.split(0);
-            lblDelete.refresh();
-        }
-        else
-        {
-            this.btnStartOrReady.node.on(cc.Node.EventType.TOUCH_END, this.ready, this);
-            let lblReady = this.btnStartOrReady.getComponentInChildren(MultiLanguageLabel);
-            lblReady.split(1);
-            lblReady.refresh();
-
-            this.btnRemoveOrLeave.node.on(cc.Node.EventType.TOUCH_END, this.leaveRoom, this);
-            let lblExit = this.btnRemoveOrLeave.getComponentInChildren(MultiLanguageLabel);
-            lblExit.split(1);
-            lblExit.refresh();
+            this.lblReady.changeString(this.stringId_Start);
+            this.btnLeave.getComponentInChildren(MultiLanguageLabel).changeString(this.stringId_Remove);
         }
     }
 
@@ -95,91 +96,141 @@ export default class InRoomScene extends cc.Component
     {
         cc.systemEvent.off(NetworkEvent.ROOM_ADD_PLAYER, this.onNewPlayerJoined, this);
         cc.systemEvent.off(NetworkEvent.ROOM_REMOVE_PLAYER, this.onNewPlayerRemoved, this);
-        cc.systemEvent.off(NetworkEvent.ROOM_REMOVED, this.onRoomRemoved, this);
-        this.btnStartOrReady.node.off(cc.Node.EventType.TOUCH_END);
-        this.btnRemoveOrLeave.node.off(cc.Node.EventType.TOUCH_END);
+        cc.systemEvent.off(NetworkEvent.ROOM_MESSAGE, this.onReceiveMessage, this);
     }
 
-    private startGame()
+    private sendMessage(message: IMessage, toPlayers?: number[])
     {
-
+        NetworkController.getClient().sendMessage(MessageCode.ROOM_MESSAGE, message, toPlayers);
     }
 
-    private removeRoom()
+    private addPlayer(player: PlayerInfo)
     {
-        this.leaveRoom();
-    }
-
-    private ready()
-    {
-        this.isReady = !this.isReady;
-        this.btnStartOrReady.node.color = this.isReady ? cc.Color.GRAY : cc.Color.WHITE;
-        this.players.get(this.myUserId).setReady(this.isReady);
-        NetworkController.getClient().sendMessage(MessageCode.ROOM_MESSAGE, new MessageReady(this.isReady));
-    }
-
-    private leaveRoom()
-    {
-        NetworkController.getClient().leaveRoom();
-        LobbyScene.GoToLobby();
-    }
-
-    private updateRoom(players: PlayerInfo[])
-    {
-        this.playersContainer.node.removeAllChildren();
-        players.sort((a, b) => a.inRoomUserId - b.inRoomUserId);
-        players.forEach(x => this.onNewPlayerJoined(x));
-    }
-
-    private onReceiveMessage(data: IMessage, sender: PlayerInfo)
-    {
-        if (sender.inRoomUserId == this.myUserId)
-            return;
-
-        if (!data && !data.type)
-            return;
-
-        if (data.type === MessageType.Ready)
-        {
-            let message = data as IMessageReady;
-            let player = this.players.get(sender.inRoomUserId);
-            if (player)
-                player.setReady(message.isReady);
-        }
-    }
-
-    private onNewPlayerJoined(playerAdded: PlayerInfo)
-    {
-        if (CC_DEBUG && this.players.has(playerAdded.inRoomUserId))
+        if (CC_DEBUG && this.players.has(player.inRoomUserId))
         {
             cc.error("Có tồn tại 2 player có cùng InRoomUserId");
             cc.log(this.players);
-            cc.log(playerAdded);
+            cc.log(player);
         }
 
         let node = cc.instantiate(this.playerInfoDisplayPrefab);
         this.playersContainer.node.addChild(node);
 
         let infoDisplay = node.getComponent(PlayerInfoDisplay);
-        infoDisplay.init(playerAdded);
-        this.players.set(playerAdded.inRoomUserId, infoDisplay);
+        infoDisplay.init(player);
+        this.players.set(player.inRoomUserId, infoDisplay);
     }
 
-    private onNewPlayerRemoved(playerRemoved: PlayerInfo)
+    private removePlayer(player: PlayerInfo)
     {
-        let infoDisplay = this.players.get(playerRemoved.inRoomUserId);
+        let infoDisplay = this.players.get(player.inRoomUserId);
         if (infoDisplay)
         {
-            this.players.delete(playerRemoved.inRoomUserId);
+            this.players.delete(player.inRoomUserId);
             this.playersContainer.node.removeChild(infoDisplay.node);
             infoDisplay.node.destroy();
         }
     }
 
-    private onRoomRemoved()
+    //#region Click Events
+    private ready()
     {
+        if (this.isRoomMaster)
+        {
+
+        }
+        else
+        {
+            const isReady = !this.isReady;
+            this.isReady = isReady;
+
+            if (isReady)
+            {
+                this.btnReady.node.color = cc.Color.BLACK;
+                this.lblReady.changeString(this.stringId_Cancel);
+                this.btnLeave.interactable = false;
+                this.totalNumberOfReady++;
+            }
+            else
+            {
+                this.btnReady.node.color = cc.Color.WHITE;
+                this.lblReady.changeString(this.stringId_Ready);
+                this.btnLeave.interactable = true;
+                this.totalNumberOfReady--;
+            }
+
+            this.players.get(this.myUserId).setReady(isReady);
+            this.sendMessage(new MessageReady(isReady));
+        }
+    }
+
+    private leaveRoom()
+    {
+        if (this.isRoomMaster)
+        {
+            this.sendMessage(new MessageRemoveThisRoom());
+        }
+        NetworkController.getClient().leaveRoom();
         LobbyScene.GoToLobby();
     }
+    //#endregion
+
+    //#region Network Events
+
+    private onReceiveMessage(rawData: IMessage, sender: PlayerInfo)
+    {
+        if (sender.inRoomUserId == this.myUserId)
+            return;
+
+        if (!rawData && !rawData.type)
+            return;
+
+        switch (rawData.type)
+        {
+            case MessageType.Ready:
+                {
+                    let data = rawData as IMessageReady;
+                    let player = this.players.get(sender.inRoomUserId);
+                    if (player)
+                    {
+                        player.setReady(data.isReady);
+                        if (this.isRoomMaster)
+                        {
+                            this.totalNumberOfReady += data.isReady ? 1 : -1;
+                            this.btnReady.interactable = this.totalNumberOfReady === this.roomInfo.maxPlayers;
+                        }
+                    }
+                }
+                break;
+
+            case MessageType.RemoveThisRoom:
+                if (sender.isRoomMaster)
+                    this.leaveRoom();
+                break;
+
+            case MessageType.Chat:
+                {
+                    let data = rawData as IMessageChat;
+                    this.chatWindow.addMessage(TextAnchor.Left, data.chatMessage, sender.displayName);
+                }
+                break;
+        }
+    }
+
+    private onNewPlayerJoined(playerAdded: PlayerInfo)
+    {
+        this.addPlayer(playerAdded);
+
+        // Gửi ready message thêm một lần nữa để player mới đều thấy được
+        NetworkController.getClient().sendMessage(MessageCode.ROOM_MESSAGE, new MessageReady(this.isReady), [playerAdded.inRoomUserId]);
+    }
+
+    private onNewPlayerRemoved(playerRemoved: PlayerInfo)
+    {
+        this.removePlayer(playerRemoved);
+    }
+
+    //#endregion
 
     //#region Cheat Engine
     private cheat_count = 100;
@@ -193,7 +244,7 @@ export default class InRoomScene extends cc.Component
         player.isRoomMaster = false;
         player.inRoomUserId = this.cheat_count++;
 
-        this.onNewPlayerJoined(player);
+        this.addPlayer(player);
     }
 
     private cheat_removePlayerWithId(userId: number)
@@ -206,7 +257,7 @@ export default class InRoomScene extends cc.Component
         {
             let player = new PlayerInfo();
             player.inRoomUserId = infoDisplay.InRoomUserId;
-            this.onNewPlayerRemoved(player);
+            this.removePlayer(player);
         }
     }
     //#endregion
@@ -218,13 +269,18 @@ interface IMessageReady
     isReady: boolean;
 }
 
-interface IMessageOther
+interface IMessageRemoveThisRoom
 {
     type: MessageType;
-    something: number;
 }
 
-type IMessage = IMessageReady | IMessageOther;
+interface IMessageChat
+{
+    type: MessageType;
+    chatMessage: string;
+}
+
+type IMessage = IMessageReady | IMessageRemoveThisRoom;
 
 class MessageReady implements IMessageReady
 {
@@ -232,5 +288,15 @@ class MessageReady implements IMessageReady
     public isReady = false;
     constructor(isReady: boolean) { this.isReady = isReady; }
 }
+class MessageRemoveThisRoom implements IMessageRemoveThisRoom
+{
+    public type = MessageType.RemoveThisRoom;
+}
+class MessageChat implements IMessageChat
+{
+    public type = MessageType.Chat;
+    public chatMessage: string = null;
+    constructor(chatMessage: string) { this.chatMessage = chatMessage; }
+}
 
-enum MessageType { Ready, Other };
+enum MessageType { Ready, RemoveThisRoom, Chat };
